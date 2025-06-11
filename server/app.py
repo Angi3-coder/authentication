@@ -7,6 +7,9 @@ from datetime import timedelta
 
 app = Flask(__name__)
 
+CORS(app, supports_credentials=True)
+
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #Used to sign session cookies
@@ -56,15 +59,26 @@ def login():
         session['user_id'] = user.id
 
 
-        return jsonify({"message": "Logged in successfully"}) 
+        return jsonify({"message": "Logged in successfully"}), 200
 
-    return jsonify({"error":"Invalid username or password"})  
+    return jsonify({"error":"Invalid username or password"}), 400
 
 @app.route('/logout', methods=['POST'])     
 def logout():
     #remove user_id from session
     session.pop('user_id', None)
     return jsonify({"Message": "Logged out successfully"})
+
+#-----PROTECTED ROUTES-------
+# Route requires login
+@app.route('/protected', methods=['POST'])
+def protected():
+    #ensure that the user in logged in
+    if not session.get('user_id'):
+        return jsonify({"error": "Unathorized"}), 401
+    
+    return jsonify({'message': "Protected Content"})
+
 
 
 if __name__ == "__main__":
