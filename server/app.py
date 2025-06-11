@@ -40,6 +40,7 @@ def signup():
     user = User(username=data['username'])
     #hash password
     user.set_password(password=data['password'])
+    user = User(role ='user')
 
     #save and commit
     db.session.add(user)
@@ -78,6 +79,30 @@ def protected():
         return jsonify({"error": "Unathorized"}), 401
     
     return jsonify({'message': "Protected Content"})
+
+@app.route('/profile')
+def profile():
+    user_id = session.get('user_id')
+
+    if not user_id:
+        return jsonify({'error': "Not Logged in"})
+    
+    user = User.query.get(user_id)
+
+    return jsonify({'id': user.id, 'username': user.username})
+
+@app.route('/admin/dashboard')
+def admin_dashboard():
+    user_id = session.get('user_id')
+
+    if not user_id:
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    user = User.query.get(user_id)
+    if user.role != 'admin':
+        return jsonify({'error': "Admins only!!"}), 403
+    
+    return jsonify({"Message": "Welcome, Admin"})
 
 
 

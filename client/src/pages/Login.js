@@ -1,10 +1,11 @@
 import React, {useState}from 'react'
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 function Login() {
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const navigate = useNavigate()
     
 
     const user = { username, password }
@@ -23,7 +24,13 @@ function Login() {
         })
         .then(res=>res.json())
         .then(data=>{
-            console.log(data)
+
+            if (data.message === 'Logged in successfully') {
+                navigate ('/profile')
+            } else {
+                alert ('Login Failed!')
+            }
+            
             setPassword('')
             setUsername('')
             //after a succesful log init should redirect us to the persons profile
