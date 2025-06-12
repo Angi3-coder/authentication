@@ -60,7 +60,7 @@ def login():
         session['user_id'] = user.id
 
 
-        return jsonify({"message": "Logged in successfully"}), 200
+        return jsonify({"message": "Logged in successfully", "role": user.role}), 200
 
     return jsonify({"error":"Invalid username or password"}), 400
 

@@ -26,7 +26,11 @@ function Login() {
         .then(data=>{
 
             if (data.message === 'Logged in successfully') {
+                if (data.role === 'admin'){
+                    navigate('/admin/dashboard')
+                }else {
                 navigate ('/profile')
+                }
             } else {
                 alert ('Login Failed!')
             }
